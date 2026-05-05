@@ -1,0 +1,22 @@
+{
+    "version": "2.0.0",
+    "configurations": [
+        {
+            "name": "Run ANTLR",
+            "type": "antlr-debug",
+            "request": "launch",
+            "input": "./Phase-1/samples/sample1.mol", 
+            "grammar": "./Phase-1/src/main/grammar/MOL.g4",
+            "startRule": "program",
+            "printParseTree": true,
+            "visualParseTree": true
+        },
+        {
+            "name": "Run MOL",   
+            "type": "java",             
+            "request": "launch",        
+            "mainClass": "Main",              
+            "args": ["./Phase-1/samples/sample1.mol"]          
+        },
+    ]
+}
