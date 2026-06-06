@@ -615,7 +615,7 @@ public class MOLParser extends Parser {
 
 			          ((FieldDeclContext)_localctx).ASTNode =  new FieldDeclaration();
 			          _localctx.ASTNode.setLine(((FieldDeclContext)_localctx).id.getLine());
-			          _localctx.ASTNode.setAccessModifier(((FieldDeclContext)_localctx).am.ASTNode);
+			          if (((FieldDeclContext)_localctx).am != null) _localctx.ASTNode.setAccessModifier(((FieldDeclContext)_localctx).am.ASTNode);
 			          _localctx.ASTNode.setMutable(((FieldDeclContext)_localctx).m != null);
 			          _localctx.ASTNode.setType(((FieldDeclContext)_localctx).t.ASTNode);
 			          _localctx.ASTNode.setName(((FieldDeclContext)_localctx).id.getText());
@@ -713,10 +713,10 @@ public class MOLParser extends Parser {
 
 			          ((MethodDeclContext)_localctx).ASTNode =  new MethodDeclaration();
 			          _localctx.ASTNode.setLine(((MethodDeclContext)_localctx).id.getLine());
-			          _localctx.ASTNode.setAccessModifier(((MethodDeclContext)_localctx).am.ASTNode);
+			          if (((MethodDeclContext)_localctx).am != null) _localctx.ASTNode.setAccessModifier(((MethodDeclContext)_localctx).am.ASTNode);
 			          _localctx.ASTNode.setReturnType(((MethodDeclContext)_localctx).t.ASTNode);
 			          _localctx.ASTNode.setName(((MethodDeclContext)_localctx).id.getText());
-			          if (_localctx.pl != null) _localctx.ASTNode.setParams(((MethodDeclContext)_localctx).pl.ASTNode);
+			          if (((MethodDeclContext)_localctx).pl != null) _localctx.ASTNode.setParams(((MethodDeclContext)_localctx).pl.ASTNode);
 			          _localctx.ASTNode.setBody(((MethodDeclContext)_localctx).b.ASTNode);
 			      
 			}
@@ -806,9 +806,9 @@ public class MOLParser extends Parser {
 
 			          ((ConstructorDeclContext)_localctx).ASTNode =  new ConstructorDeclaration();
 			          _localctx.ASTNode.setLine(((ConstructorDeclContext)_localctx).id.getLine());
-			          _localctx.ASTNode.setAccessModifier(((ConstructorDeclContext)_localctx).am.ASTNode);
+			          if (((ConstructorDeclContext)_localctx).am != null) _localctx.ASTNode.setAccessModifier(((ConstructorDeclContext)_localctx).am.ASTNode);
 			          _localctx.ASTNode.setName(((ConstructorDeclContext)_localctx).id.getText());
-			          if (((ConstructorDeclContext)_localctx).pl.ASTNode != null) _localctx.ASTNode.setParams(((ConstructorDeclContext)_localctx).pl.ASTNode);
+			          if (((ConstructorDeclContext)_localctx).pl != null) _localctx.ASTNode.setParams(((ConstructorDeclContext)_localctx).pl.ASTNode);
 			          _localctx.ASTNode.setBody(((ConstructorDeclContext)_localctx).b.ASTNode);
 			      
 			}
@@ -1560,9 +1560,9 @@ public class MOLParser extends Parser {
 
 				                    ForStmt stmt = new ForStmt();
 				                    stmt.setLine(_localctx.start.getLine());
-				                    stmt.setInit(((ForStmtContext)_localctx).fi.ASTNode);
-				                    stmt.setCondition(((ForStmtContext)_localctx).c.ASTNode);
-				                    stmt.setUpdate(((ForStmtContext)_localctx).fu.ASTNode);
+				                    if (((ForStmtContext)_localctx).fi != null) stmt.setInit(((ForStmtContext)_localctx).fi.ASTNode);
+				                    if (((ForStmtContext)_localctx).c != null) stmt.setCondition(((ForStmtContext)_localctx).c.ASTNode);
+				                    if (((ForStmtContext)_localctx).fu != null) stmt.setUpdate(((ForStmtContext)_localctx).fu.ASTNode);
 				                    stmt.setBody(((ForStmtContext)_localctx).b.ASTNode);
 				                    ((ForStmtContext)_localctx).ASTNode =  stmt;
 				            
@@ -1589,7 +1589,7 @@ public class MOLParser extends Parser {
 
 				                    ReturnStmt stmt = new ReturnStmt();
 				                    stmt.setLine(((ReturnStmtContext)_localctx).r.getLine());
-				                    if (((ReturnStmtContext)_localctx).e.ASTNode != null) stmt.setValue(((ReturnStmtContext)_localctx).e.ASTNode);
+				                    if (((ReturnStmtContext)_localctx).e != null) stmt.setValue(((ReturnStmtContext)_localctx).e.ASTNode);
 				                    ((ReturnStmtContext)_localctx).ASTNode =  stmt;
 				            
 				}
@@ -1771,11 +1771,11 @@ public class MOLParser extends Parser {
 			          _localctx.ASTNode.setMutable(((VarDeclStmtContext)_localctx).m != null);
 			          _localctx.ASTNode.setType(((VarDeclStmtContext)_localctx).t.ASTNode);
 			          _localctx.ASTNode.setName(((VarDeclStmtContext)_localctx).id.getText());
-			          if (_localctx.al != null) {
+			          if (((VarDeclStmtContext)_localctx).al != null) {
 			              _localctx.ASTNode.setHasConstructorCall(true);
 			              _localctx.ASTNode.setConstructorArgs(((VarDeclStmtContext)_localctx).al.ASTNode);
 			          }
-			          if (_localctx.e != null) _localctx.ASTNode.setInitializer(((VarDeclStmtContext)_localctx).e.ASTNode);
+			          if (((VarDeclStmtContext)_localctx).e != null) _localctx.ASTNode.setInitializer(((VarDeclStmtContext)_localctx).e.ASTNode);
 			      
 			}
 		}
@@ -1905,7 +1905,7 @@ public class MOLParser extends Parser {
 				          init.setMutable(((ForInitDeclContext)_localctx).m != null);
 				          init.setType(((ForInitDeclContext)_localctx).t.ASTNode);
 				          init.setName(((ForInitDeclContext)_localctx).id.getText());
-				          if (((ForInitDeclContext)_localctx).e.ASTNode != null) init.setInitializer(((ForInitDeclContext)_localctx).e.ASTNode);
+				          if (((ForInitDeclContext)_localctx).e != null) init.setInitializer(((ForInitDeclContext)_localctx).e.ASTNode);
 				          ((ForInitDeclContext)_localctx).ASTNode =  init;
 				      
 				}
@@ -2607,7 +2607,7 @@ public class MOLParser extends Parser {
 						                              CallExpr expr = new CallExpr();
 						                              expr.setLine(_localctx.start.getLine());
 						                              expr.setCallee(((CallExprContext)_localctx).e.ASTNode);
-						                              if (((CallExprContext)_localctx).al.ASTNode != null) expr.setArgs(((CallExprContext)_localctx).al.ASTNode);
+						                              if (((CallExprContext)_localctx).al != null) expr.setArgs(((CallExprContext)_localctx).al.ASTNode);
 						                              ((CallExprContext)_localctx).ASTNode =  expr;
 						                      
 						}

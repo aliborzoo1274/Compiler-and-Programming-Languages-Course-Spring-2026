@@ -85,7 +85,7 @@ fieldDecl returns [FieldDeclaration ASTNode]
       {
           $ASTNode = new FieldDeclaration();
           $ASTNode.setLine($id.getLine());
-          $ASTNode.setAccessModifier($am.ASTNode);
+          if ($am.ctx != null) $ASTNode.setAccessModifier($am.ASTNode);
           $ASTNode.setMutable($m != null);
           $ASTNode.setType($t.ASTNode);
           $ASTNode.setName($id.getText());
@@ -97,10 +97,10 @@ methodDecl returns [MethodDeclaration ASTNode]
       {
           $ASTNode = new MethodDeclaration();
           $ASTNode.setLine($id.getLine());
-          $ASTNode.setAccessModifier($am.ASTNode);
+          if ($am.ctx != null) $ASTNode.setAccessModifier($am.ASTNode);
           $ASTNode.setReturnType($t.ASTNode);
           $ASTNode.setName($id.getText());
-          if ($ctx.pl != null) $ASTNode.setParams($pl.ASTNode);
+          if ($pl.ctx != null) $ASTNode.setParams($pl.ASTNode);
           $ASTNode.setBody($b.ASTNode);
       }
     ;
@@ -110,9 +110,9 @@ constructorDecl returns [ConstructorDeclaration ASTNode]
       {
           $ASTNode = new ConstructorDeclaration();
           $ASTNode.setLine($id.getLine());
-          $ASTNode.setAccessModifier($am.ASTNode);
+          if ($am.ctx != null) $ASTNode.setAccessModifier($am.ASTNode);
           $ASTNode.setName($id.getText());
-          if ($pl.ASTNode != null) $ASTNode.setParams($pl.ASTNode);
+          if ($pl.ctx != null) $ASTNode.setParams($pl.ASTNode);
           $ASTNode.setBody($b.ASTNode);
       }
     ;
@@ -198,9 +198,9 @@ statement returns [Statement ASTNode]
             {
                     ForStmt stmt = new ForStmt();
                     stmt.setLine($start.getLine());
-                    stmt.setInit($fi.ASTNode);
-                    stmt.setCondition($c.ASTNode);
-                    stmt.setUpdate($fu.ASTNode);
+                    if ($fi.ctx != null) stmt.setInit($fi.ASTNode);
+                    if ($c.ctx != null) stmt.setCondition($c.ASTNode);
+                    if ($fu.ctx != null) stmt.setUpdate($fu.ASTNode);
                     stmt.setBody($b.ASTNode);
                     $ASTNode = stmt;
             }                                                                     # ForStmt
@@ -208,7 +208,7 @@ statement returns [Statement ASTNode]
             {
                     ReturnStmt stmt = new ReturnStmt();
                     stmt.setLine($r.getLine());
-                    if ($e.ASTNode != null) stmt.setValue($e.ASTNode);
+                    if ($e.ctx != null) stmt.setValue($e.ASTNode);
                     $ASTNode = stmt;
             }                                                                     # ReturnStmt
         | b='break' ';'
@@ -247,11 +247,11 @@ varDeclStmt returns [VarDeclarationStmt ASTNode]
           $ASTNode.setMutable($m != null);
           $ASTNode.setType($t.ASTNode);
           $ASTNode.setName($id.getText());
-          if ($ctx.al != null) {
+          if ($al.ctx != null) {
               $ASTNode.setHasConstructorCall(true);
               $ASTNode.setConstructorArgs($al.ASTNode);
           }
-          if ($ctx.e != null) $ASTNode.setInitializer($e.ASTNode);
+          if ($e.ctx != null) $ASTNode.setInitializer($e.ASTNode);
       }
     ;
 
@@ -263,7 +263,7 @@ forInit returns [ForInit ASTNode]
           init.setMutable($m != null);
           init.setType($t.ASTNode);
           init.setName($id.getText());
-          if ($e.ASTNode != null) init.setInitializer($e.ASTNode);
+          if ($e.ctx != null) init.setInitializer($e.ASTNode);
           $ASTNode = init;
       }                                                                     # ForInitDecl
     | e1=expression '=' e2=expression (',' e3+=expression '=' e4+=expression)*
@@ -332,7 +332,7 @@ expression returns [Expression ASTNode]
                     CallExpr expr = new CallExpr();
                     expr.setLine($start.getLine());
                     expr.setCallee($e.ASTNode);
-                    if ($al.ASTNode != null) expr.setArgs($al.ASTNode);
+                    if ($al.ctx != null) expr.setArgs($al.ASTNode);
                     $ASTNode = expr;
             }                                                               # CallExpr
         | op=('+' | '-') e=expression
