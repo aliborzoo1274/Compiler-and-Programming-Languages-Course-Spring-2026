@@ -100,7 +100,7 @@ methodDecl returns [MethodDeclaration ASTNode]
           $ASTNode.setAccessModifier($am.ASTNode);
           $ASTNode.setReturnType($t.ASTNode);
           $ASTNode.setName($id.getText());
-          if ($pl.ASTNode != null) $ASTNode.setParams($pl.ASTNode);
+          if ($ctx.pl != null) $ASTNode.setParams($pl.ASTNode);
           $ASTNode.setBody($b.ASTNode);
       }
     ;
@@ -247,11 +247,11 @@ varDeclStmt returns [VarDeclarationStmt ASTNode]
           $ASTNode.setMutable($m != null);
           $ASTNode.setType($t.ASTNode);
           $ASTNode.setName($id.getText());
-          if ($al.ASTNode != null) {
+          if ($ctx.al != null) {
               $ASTNode.setHasConstructorCall(true);
               $ASTNode.setConstructorArgs($al.ASTNode);
           }
-          if ($e.ASTNode != null) $ASTNode.setInitializer($e.ASTNode);
+          if ($ctx.e != null) $ASTNode.setInitializer($e.ASTNode);
       }
     ;
 
@@ -266,7 +266,7 @@ forInit returns [ForInit ASTNode]
           if ($e.ASTNode != null) init.setInitializer($e.ASTNode);
           $ASTNode = init;
       }                                                                     # ForInitDecl
-    | e1=expression '=' e2=expression (',' e3=expression '=' e4=expression)*
+    | e1=expression '=' e2=expression (',' e3+=expression '=' e4+=expression)*
       {
           ForInitAssign init = new ForInitAssign();
           init.setLine($start.getLine());
@@ -275,11 +275,11 @@ forInit returns [ForInit ASTNode]
           first.setLeft($e1.ASTNode);
           first.setRight($e2.ASTNode);
           init.addAssignment(first);
-          for (int i = 0; i < $ctx.e3.size(); i++) {
+          for (int i = 0; i < $e3.size(); i++) {
               Assignment assign = new Assignment();
-              assign.setLine($ctx.e3.get(i).getLine());
-              assign.setLeft($ctx.e3.get(i).ASTNode);
-              assign.setRight($ctx.e4.get(i).ASTNode);
+              assign.setLine($e3.get(i).start.getLine());
+              assign.setLeft($e3.get(i).ASTNode);
+              assign.setRight($e4.get(i).ASTNode);
               init.addAssignment(assign);
           }
           $ASTNode = init;
@@ -287,7 +287,7 @@ forInit returns [ForInit ASTNode]
     ;
 
 forUpdate returns [ForUpdateAssign ASTNode]
-    : e1=expression '=' e2=expression (',' e3=expression '=' e4=expression)*
+    : e1=expression '=' e2=expression (',' e3+=expression '=' e4+=expression)*
       {
           ForUpdateAssign update = new ForUpdateAssign();
           update.setLine($start.getLine());
@@ -296,11 +296,11 @@ forUpdate returns [ForUpdateAssign ASTNode]
           first.setLeft($e1.ASTNode);
           first.setRight($e2.ASTNode);
           update.addAssignment(first);
-          for (int i = 0; i < $ctx.e3.size(); i++) {
+          for (int i = 0; i < $e3.size(); i++) {
               Assignment assign = new Assignment();
-              assign.setLine($ctx.e3.get(i).getLine());
-              assign.setLeft($ctx.e3.get(i).ASTNode);
-              assign.setRight($ctx.e4.get(i).ASTNode);
+              assign.setLine($e3.get(i).start.getLine());
+              assign.setLeft($e3.get(i).ASTNode);
+              assign.setRight($e4.get(i).ASTNode);
               update.addAssignment(assign);
           }
           $ASTNode = update;

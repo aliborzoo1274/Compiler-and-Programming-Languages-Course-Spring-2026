@@ -716,7 +716,7 @@ public class MOLParser extends Parser {
 			          _localctx.ASTNode.setAccessModifier(((MethodDeclContext)_localctx).am.ASTNode);
 			          _localctx.ASTNode.setReturnType(((MethodDeclContext)_localctx).t.ASTNode);
 			          _localctx.ASTNode.setName(((MethodDeclContext)_localctx).id.getText());
-			          if (((MethodDeclContext)_localctx).pl.ASTNode != null) _localctx.ASTNode.setParams(((MethodDeclContext)_localctx).pl.ASTNode);
+			          if (_localctx.pl != null) _localctx.ASTNode.setParams(((MethodDeclContext)_localctx).pl.ASTNode);
 			          _localctx.ASTNode.setBody(((MethodDeclContext)_localctx).b.ASTNode);
 			      
 			}
@@ -1771,11 +1771,11 @@ public class MOLParser extends Parser {
 			          _localctx.ASTNode.setMutable(((VarDeclStmtContext)_localctx).m != null);
 			          _localctx.ASTNode.setType(((VarDeclStmtContext)_localctx).t.ASTNode);
 			          _localctx.ASTNode.setName(((VarDeclStmtContext)_localctx).id.getText());
-			          if (((VarDeclStmtContext)_localctx).al.ASTNode != null) {
+			          if (_localctx.al != null) {
 			              _localctx.ASTNode.setHasConstructorCall(true);
 			              _localctx.ASTNode.setConstructorArgs(((VarDeclStmtContext)_localctx).al.ASTNode);
 			          }
-			          if (((VarDeclStmtContext)_localctx).e.ASTNode != null) _localctx.ASTNode.setInitializer(((VarDeclStmtContext)_localctx).e.ASTNode);
+			          if (_localctx.e != null) _localctx.ASTNode.setInitializer(((VarDeclStmtContext)_localctx).e.ASTNode);
 			      
 			}
 		}
@@ -1808,8 +1808,9 @@ public class MOLParser extends Parser {
 	public static class ForInitAssignContext extends ForInitContext {
 		public ExpressionContext e1;
 		public ExpressionContext e2;
-		public ExpressionContext e3;
-		public ExpressionContext e4;
+		public ExpressionContext expression;
+		public List<ExpressionContext> e3 = new ArrayList<ExpressionContext>();
+		public List<ExpressionContext> e4 = new ArrayList<ExpressionContext>();
 		public List<ExpressionContext> expression() {
 			return getRuleContexts(ExpressionContext.class);
 		}
@@ -1928,11 +1929,13 @@ public class MOLParser extends Parser {
 					setState(301);
 					match(T__2);
 					setState(302);
-					((ForInitAssignContext)_localctx).e3 = expression(0);
+					((ForInitAssignContext)_localctx).expression = expression(0);
+					((ForInitAssignContext)_localctx).e3.add(((ForInitAssignContext)_localctx).expression);
 					setState(303);
 					match(T__12);
 					setState(304);
-					((ForInitAssignContext)_localctx).e4 = expression(0);
+					((ForInitAssignContext)_localctx).expression = expression(0);
+					((ForInitAssignContext)_localctx).e4.add(((ForInitAssignContext)_localctx).expression);
 					}
 					}
 					setState(310);
@@ -1947,11 +1950,11 @@ public class MOLParser extends Parser {
 				          first.setLeft(((ForInitAssignContext)_localctx).e1.ASTNode);
 				          first.setRight(((ForInitAssignContext)_localctx).e2.ASTNode);
 				          init.addAssignment(first);
-				          for (int i = 0; i < _localctx.e3.size(); i++) {
+				          for (int i = 0; i < ((ForInitAssignContext)_localctx).e3.size(); i++) {
 				              Assignment assign = new Assignment();
-				              assign.setLine(_localctx.e3.get(i).getLine());
-				              assign.setLeft(_localctx.e3.get(i).ASTNode);
-				              assign.setRight(_localctx.e4.get(i).ASTNode);
+				              assign.setLine(((ForInitAssignContext)_localctx).e3.get(i).start.getLine());
+				              assign.setLeft(((ForInitAssignContext)_localctx).e3.get(i).ASTNode);
+				              assign.setRight(((ForInitAssignContext)_localctx).e4.get(i).ASTNode);
 				              init.addAssignment(assign);
 				          }
 				          ((ForInitAssignContext)_localctx).ASTNode =  init;
@@ -1989,8 +1992,9 @@ public class MOLParser extends Parser {
 	public static class ForUpdateAssignContext extends ForUpdateContext {
 		public ExpressionContext e1;
 		public ExpressionContext e2;
-		public ExpressionContext e3;
-		public ExpressionContext e4;
+		public ExpressionContext expression;
+		public List<ExpressionContext> e3 = new ArrayList<ExpressionContext>();
+		public List<ExpressionContext> e4 = new ArrayList<ExpressionContext>();
 		public List<ExpressionContext> expression() {
 			return getRuleContexts(ExpressionContext.class);
 		}
@@ -2036,11 +2040,13 @@ public class MOLParser extends Parser {
 				setState(318);
 				match(T__2);
 				setState(319);
-				((ForUpdateAssignContext)_localctx).e3 = expression(0);
+				((ForUpdateAssignContext)_localctx).expression = expression(0);
+				((ForUpdateAssignContext)_localctx).e3.add(((ForUpdateAssignContext)_localctx).expression);
 				setState(320);
 				match(T__12);
 				setState(321);
-				((ForUpdateAssignContext)_localctx).e4 = expression(0);
+				((ForUpdateAssignContext)_localctx).expression = expression(0);
+				((ForUpdateAssignContext)_localctx).e4.add(((ForUpdateAssignContext)_localctx).expression);
 				}
 				}
 				setState(327);
@@ -2055,11 +2061,11 @@ public class MOLParser extends Parser {
 			          first.setLeft(((ForUpdateAssignContext)_localctx).e1.ASTNode);
 			          first.setRight(((ForUpdateAssignContext)_localctx).e2.ASTNode);
 			          update.addAssignment(first);
-			          for (int i = 0; i < _localctx.e3.size(); i++) {
+			          for (int i = 0; i < ((ForUpdateAssignContext)_localctx).e3.size(); i++) {
 			              Assignment assign = new Assignment();
-			              assign.setLine(_localctx.e3.get(i).getLine());
-			              assign.setLeft(_localctx.e3.get(i).ASTNode);
-			              assign.setRight(_localctx.e4.get(i).ASTNode);
+			              assign.setLine(((ForUpdateAssignContext)_localctx).e3.get(i).start.getLine());
+			              assign.setLeft(((ForUpdateAssignContext)_localctx).e3.get(i).ASTNode);
+			              assign.setRight(((ForUpdateAssignContext)_localctx).e4.get(i).ASTNode);
 			              update.addAssignment(assign);
 			          }
 			          ((ForUpdateAssignContext)_localctx).ASTNode =  update;

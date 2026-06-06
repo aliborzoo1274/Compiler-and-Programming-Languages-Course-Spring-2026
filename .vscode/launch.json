@@ -15,7 +15,7 @@
             "name": "Run MOL",   
             "type": "java",             
             "request": "launch",        
-            "mainClass": "Main",              
+            "mainClass": "MOL",              
             "args": ["./samples/sample1.mol"]          
         },
     ]
