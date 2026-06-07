@@ -44,7 +44,7 @@ public class PrintVisitor extends Visitor<Void> {
         int methodCount = 0;
         int fieldCount = 0;
         for (Declaration member : moduleDeclaration.getMembers()) {
-            if (member instanceof MethodDeclaration) {
+            if (member instanceof MethodDeclaration || member instanceof ConstructorDeclaration) {
                 methodCount++;
             } else if (member instanceof FieldDeclaration) {
                 fieldCount++;
@@ -54,7 +54,7 @@ public class PrintVisitor extends Visitor<Void> {
         appendLine("module " + moduleDeclaration.getName() + " [methods:" + methodCount + " fields:" + fieldCount + "]");
         indent++;
         for (Declaration member : moduleDeclaration.getMembers()) {
-            if (member instanceof MethodDeclaration || member instanceof FieldDeclaration) {
+            if (member instanceof MethodDeclaration || member instanceof FieldDeclaration || member instanceof ConstructorDeclaration) {
                 member.accept(this);
             }
         }
@@ -92,6 +92,17 @@ public class PrintVisitor extends Visitor<Void> {
         return null;
     }
 
+    @Override
+    public Void visit(ConstructorDeclaration constructorDeclaration) {
+        String signature = "(" + paramTypes(constructorDeclaration.getParams()) + " -> " + "void" + ")";
+        int statementCount = statementCount(constructorDeclaration.getBody());
+        String line = "method " + constructorDeclaration.getName() + " " + signature
+                + accessSuffix(constructorDeclaration.getAccessModifier())
+                + " [statements:" + statementCount + "]";
+        appendLine(line);
+        return null;
+    }
+
     private void appendLine(String line) {
         for (int i = 0; i < indent; i++) {
             builder.append('\t');
@@ -115,7 +126,7 @@ public class PrintVisitor extends Visitor<Void> {
 
     private String paramTypes(List<Param> params) {
         if (params == null || params.isEmpty()) {
-            return "";
+            return "void";
         }
         StringBuilder result = new StringBuilder();
         for (int i = 0; i < params.size(); i++) {
