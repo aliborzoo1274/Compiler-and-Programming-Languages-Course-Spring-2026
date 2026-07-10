@@ -16,7 +16,7 @@
             "type": "java",             
             "request": "launch",        
             "mainClass": "MOL",              
-            "args": ["./samples/sample1.mol"]          
+            "args": ["./samples/Name/notDeclaredVar.mol"]          
         },
     ]
 }
