@@ -3,7 +3,7 @@
         "utilities/antlr-4.13.2-complete.jar"
     ],
     "java.project.sourcePaths": [
-        "Phase-2/src"
+        "Phase-3/src"
     ],
     "antlr4.generation": {
         "mode": "external",
