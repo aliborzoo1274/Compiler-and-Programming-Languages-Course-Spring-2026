@@ -1,44 +1,9 @@
 package main.visitor;
 
-import main.ast.nodes.Program;
-import main.ast.nodes.Type;
-import main.ast.nodes.decl.AccessModifier;
-import main.ast.nodes.decl.ConstructorDeclaration;
-import main.ast.nodes.decl.Declaration;
-import main.ast.nodes.decl.FieldDeclaration;
-import main.ast.nodes.decl.MethodDeclaration;
-import main.ast.nodes.decl.ModuleDeclaration;
-import main.ast.nodes.decl.Param;
-import main.ast.nodes.decl.StructDeclaration;
-import main.ast.nodes.expr.BinaryExpr;
-import main.ast.nodes.expr.BinaryOperator;
-import main.ast.nodes.expr.BoolLiteral;
-import main.ast.nodes.expr.CallExpr;
-import main.ast.nodes.expr.Expression;
-import main.ast.nodes.expr.FloatLiteral;
-import main.ast.nodes.expr.Identifier;
-import main.ast.nodes.expr.IntLiteral;
-import main.ast.nodes.expr.MemberAccessExpr;
-import main.ast.nodes.expr.ThisExpr;
-import main.ast.nodes.expr.UnaryExpr;
-import main.ast.nodes.expr.UnaryOperator;
-import main.ast.nodes.stmt.Assignment;
-import main.ast.nodes.stmt.AssignmentStmt;
-import main.ast.nodes.stmt.BlockStmt;
-import main.ast.nodes.stmt.BreakStmt;
-import main.ast.nodes.stmt.ContinueStmt;
-import main.ast.nodes.stmt.ElseIfClause;
-import main.ast.nodes.stmt.ExprStmt;
-import main.ast.nodes.stmt.ForInitAssign;
-import main.ast.nodes.stmt.ForInitDecl;
-import main.ast.nodes.stmt.ForStmt;
-import main.ast.nodes.stmt.ForUpdateAssign;
-import main.ast.nodes.stmt.IfStmt;
-import main.ast.nodes.stmt.OutputStmt;
-import main.ast.nodes.stmt.ReturnStmt;
-import main.ast.nodes.stmt.Statement;
-import main.ast.nodes.stmt.VarDeclarationStmt;
-import main.ast.nodes.stmt.WhileStmt;
+import main.ast.nodes.*;
+import main.ast.nodes.decl.*;
+import main.ast.nodes.expr.*;
+import main.ast.nodes.stmt.*;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -75,7 +40,6 @@ public class CodeGenerator extends Visitor<String> {
     private int nextSlot;
     private int nextLabel;
 
-    /** Generates into {@code CodeGenOutput}. */
     public CodeGenerator() {
         this(Paths.get("CodeGenOutput"));
     }
@@ -88,11 +52,6 @@ public class CodeGenerator extends Visitor<String> {
         this.outputDirectory = outputDirectory;
     }
 
-    /**
-     * Builds all Jasmin sources without writing them.  The returned map is in
-     * declaration order and maps the source filename (for example Main.j) to
-     * its contents.
-     */
     public Map<String, String> generate(Program program) {
         classes.clear();
         generatedFiles.clear();
@@ -113,7 +72,6 @@ public class CodeGenerator extends Visitor<String> {
         return new LinkedHashMap<>(generatedFiles);
     }
 
-    /** Writes the generated Jasmin files to this generator's output directory. */
     public Map<String, String> write(Program program) throws IOException {
         Map<String, String> files = generate(program);
         Files.createDirectories(outputDirectory);
@@ -128,11 +86,6 @@ public class CodeGenerator extends Visitor<String> {
         return new LinkedHashMap<>(generatedFiles);
     }
 
-    /**
-     * Returns the local-variable slot for {@code varName}, creating it when
-     * needed. Slot zero is reserved for {@code this}; method parameters are
-     * registered first, in source order.
-     */
     public int slotOf(String varName) {
         Integer slot = slots.get(varName);
         if (slot == null) {
@@ -199,8 +152,6 @@ public class CodeGenerator extends Visitor<String> {
         } else if (varDeclarationStmt.getInitializer() != null) {
             emitExpressionAs(varDeclarationStmt.getInitializer(), type);
         } else if (isReference(type) && classes.containsKey(type)) {
-            // MOL examples use `mut Account account;` as construction with the
-            // no-argument constructor, rather than as a null declaration.
             emitNew(type, new ArrayList<Expression>());
         } else {
             emitDefaultValue(type);
@@ -227,8 +178,6 @@ public class CodeGenerator extends Visitor<String> {
         String thenLabel = label();
         String next = label();
         emitBranch(ifStmt.getCondition(), thenLabel, next);
-        // Keeping labels separate from instructions is important for Jasmin's
-        // line grammar.
         emitLabel(thenLabel);
         if (ifStmt.getThenBlock() != null) ifStmt.getThenBlock().accept(this);
         emit("goto " + after);
@@ -469,13 +418,12 @@ public class CodeGenerator extends Visitor<String> {
         }
     }
 
-    /** Writes included module sources before their dependent module source. */
     private void emitDeclaration(Declaration declaration, Map<String, Declaration> declarationsByName,
                                  Set<String> emitted, Set<String> visiting) {
         String name = declaration instanceof ModuleDeclaration ? ((ModuleDeclaration) declaration).getName()
                 : declaration instanceof StructDeclaration ? ((StructDeclaration) declaration).getName() : null;
         if (name == null || emitted.contains(name)) return;
-        if (!visiting.add(name)) return; // Cyclic includes are a semantic error; avoid recursive generation here.
+        if (!visiting.add(name)) return;
         if (declaration instanceof ModuleDeclaration) {
             for (String included : ((ModuleDeclaration) declaration).getIncludes()) {
                 Declaration includedDeclaration = declarationsByName.get(included);
@@ -542,7 +490,6 @@ public class CodeGenerator extends Visitor<String> {
         out.append(".end method\n\n");
     }
 
-    /** Emits the field-wise constructor used by `Point(x, y) variable` syntax. */
     private void emitStructFieldConstructor(ClassInfo info) {
         if (info.fields.isEmpty()) return;
         List<Param> params = new ArrayList<>();
@@ -606,11 +553,10 @@ public class CodeGenerator extends Visitor<String> {
         localTypes.clear();
         loops.clear();
         currentReturnType = returnType;
-        nextSlot = 1; // slot zero is the receiver (`this`) in every MOL method.
+        nextSlot = 1;
         for (Param param : params) {
             int slot = slotOf(param.getName());
             localTypes.put(param.getName(), typeName(param.getType()));
-            // Wide values consume a second local-variable slot on the JVM.
             if (isWide(typeName(param.getType()))) nextSlot = Math.max(nextSlot, slot + 2);
         }
     }
@@ -645,8 +591,6 @@ public class CodeGenerator extends Visitor<String> {
             emitExpressionAs(assignment.getRight(), type);
             emit("putfield " + owner + "/" + member.getMemberName() + " " + descriptor(type));
         } else {
-            // The grammar permits arbitrary expressions on the left.  Evaluating
-            // the right side keeps the generated stack valid for malformed ASTs.
             emitExpression(assignment.getRight());
             emit(isWide(inferType(assignment.getRight())) ? "pop2" : "pop");
         }
@@ -660,7 +604,6 @@ public class CodeGenerator extends Visitor<String> {
         }
     }
 
-    /** Emits an expression and performs the JVM numeric widening/narrowing required by its target slot. */
     private void emitExpressionAs(Expression expression, String targetType) {
         emitExpression(expression);
         emitNumericConversion(inferType(expression), targetType);
@@ -677,8 +620,6 @@ public class CodeGenerator extends Visitor<String> {
             emit("getfield " + field.owner.name + "/" + field.name + " " + descriptor(field.type));
             return;
         }
-        // An unresolved identifier is normally rejected by semantic analysis. A
-        // null reference makes generated Jasmin verifiable even if it reaches us.
         emit("aconst_null");
     }
 
@@ -720,8 +661,6 @@ public class CodeGenerator extends Visitor<String> {
             return;
         }
 
-        // A dynamic callee is outside MOL's static call model.  Still consume
-        // its receiver and arguments before emitting a harmless object result.
         emitExpression(callee);
         emit("pop");
         for (Expression arg : call.getArgs()) {
@@ -841,13 +780,10 @@ public class CodeGenerator extends Visitor<String> {
             }
             return false;
         }
-        // A loop can execute zero times, so control may always continue after it.
         return true;
     }
 
     private String literalFloatingType(FloatLiteral literal) {
-        // The grammar has one floating literal syntax. Its surrounding declared
-        // type determines double use; float is the language's default.
         return FLOAT;
     }
 
@@ -900,7 +836,6 @@ public class CodeGenerator extends Visitor<String> {
                     if (matches) return result;
                 }
             }
-            // Struct construction initializes fields in declaration order.
             if (!info.module && info.fields.size() == args.size()) {
                 return new ArrayList<>(fieldTypes(info));
             }
