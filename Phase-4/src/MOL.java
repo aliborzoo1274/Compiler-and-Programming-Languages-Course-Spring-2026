@@ -1,13 +1,16 @@
 import main.ast.nodes.Program;
 import main.grammar.MOLLexer;
 import main.grammar.MOLParser;
+import main.visitor.CodeGenerator;
 import main.visitor.NameAnalyzer;
 import main.visitor.TypeAnalyzer;
+
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 
 import java.io.IOException;
+import java.nio.file.Paths;
 
 public class MOL {
 	public static void main(String[] args) throws IOException {
@@ -18,5 +21,6 @@ public class MOL {
 		Program program = molParser.program().ASTNode;
 		new NameAnalyzer().visit(program);
 		new TypeAnalyzer().visit(program);
+		new CodeGenerator(Paths.get("CodeGenOutput")).write(program);
 	}
 }
